@@ -1,0 +1,1 @@
+cd "C:/Users/admin/Desktop/Folder_clean/Codes/CodingEnvHere/wsml" && git add . && git commit -m "Initial commit"

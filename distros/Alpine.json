@@ -1,0 +1,6 @@
+{
+    "verjson": "0.1",
+    "name": "Alpine",
+    "url": "https://github.com/greengorych/alpine-for-wsl/releases/download/3.24.1-1/alpine-3.24.1-1-x86_64.wsl",
+    "installationtype": "wsl"
+}
