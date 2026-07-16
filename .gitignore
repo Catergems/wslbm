@@ -1,2 +1,15 @@
+# Binaries
+wslbm.exe
+wslbm
+
+# Cache
+wslbm-cache/
 wslos/
-*.exe
+
+# Temp
+engrun_temp_*.ps1
+*.ps1
+
+# Go
+*.test
+*.out
