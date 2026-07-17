@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"runtime"
+	"strings"
 )
 
 type Distro struct {
@@ -13,6 +13,10 @@ type Distro struct {
 	URL              string `json:"url"`
 	InstallationType string `json:"installationtype"`
 	Info             string `json:"info,omitempty"`
+	Checksum         string `json:"checksum,omitempty"`
+	ChecksumType     string `json:"checksumtype,omitempty"`
+	Sig              string `json:"sig,omitempty"`
+	SigType          string `json:"sigtype,omitempty"`
 }
 
 // distrosDir returns the path to the distros/ folder next to the executable.
@@ -57,32 +61,9 @@ func Find(name string) (Distro, bool) {
 		return Distro{}, false
 	}
 	for _, d := range list {
-		if equalFold(d.Name, name) {
+		if strings.EqualFold(d.Name, name) {
 			return d, true
 		}
 	}
 	return Distro{}, false
-}
-
-func equalFold(a, b string) bool {
-	if runtime.GOOS == "windows" {
-		return len(a) == len(b) && foldEq(a, b)
-	}
-	return a == b
-}
-
-func foldEq(a, b string) bool {
-	for i := 0; i < len(a); i++ {
-		ca, cb := a[i], b[i]
-		if ca >= 'A' && ca <= 'Z' {
-			ca += 32
-		}
-		if cb >= 'A' && cb <= 'Z' {
-			cb += 32
-		}
-		if ca != cb {
-			return false
-		}
-	}
-	return true
 }

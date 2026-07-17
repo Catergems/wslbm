@@ -1,5 +1,5 @@
 {
-    "verjson": "0.1",
+    "verjson": "2605.7.2",
     "name": "Nixos",
     "url": "https://github.com/nix-community/NixOS-WSL/releases/download/2605.7.2/nixos.wsl",
     "installationtype": "wsl",

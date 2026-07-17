@@ -29,10 +29,10 @@ func ListRepo() error {
 		fmt.Println("No distros found in repo.")
 		return nil
 	}
-	fmt.Printf("%-20s  %-6s  %s\n", "NAME", "VER", "TYPE")
-	fmt.Println(strings.Repeat("-", 50))
+	fmt.Printf("%-24s  %-22s  %s\n", "NAME", "VERSION", "TYPE")
+	fmt.Println(strings.Repeat("-", 56))
 	for _, d := range list {
-		fmt.Printf("%-20s  %-6s  %s\n", d.Name, d.VerJSON, d.InstallationType)
+		fmt.Printf("%-24s  %-22s  %s\n", d.Name, d.VerJSON, d.InstallationType)
 	}
 	return nil
 }

@@ -5,14 +5,14 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"wslbm/pkg/downloader"
 )
 
-// Add imports a local file (tar/wsl) or a direct URL as a new WSL distro.
-func Add(name, source, installDir string) error {
-	if name == "" || source == "" {
-		return fmt.Errorf("usage: wslbm add <name> <file-or-url> [install-dir]")
+// Add imports a distro from a URL or local tar file.
+// source is the URL or file path, name is the WSL distro name, installDir is optional.
+func Add(source, name, installDir string) error {
+	if source == "" || name == "" {
+		return fmt.Errorf("usage: wslbm add --url <url> --n <name> [dir]\n       wslbm add --tar <file> --n <name> [dir]")
 	}
 
 	if installDir == "" {
@@ -24,7 +24,8 @@ func Add(name, source, installDir string) error {
 	}
 
 	localFile := source
-	if strings.HasPrefix(source, "http://") || strings.HasPrefix(source, "https://") {
+	// If it looks like a URL, download it first
+	if len(source) > 4 && (source[:7] == "http://" || source[:8] == "https://") {
 		cacheDir := filepath.Join(os.TempDir(), "wslbm-cache")
 		var err error
 		localFile, err = downloader.Download(source, cacheDir)
@@ -33,7 +34,7 @@ func Add(name, source, installDir string) error {
 		}
 	}
 
-	fmt.Printf("Importing %s from %s into %s...\n", name, localFile, installDir)
+	fmt.Printf("Importing %s into %s...\n", name, installDir)
 	cmd := exec.Command("wsl", "--import", name, installDir, localFile)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr

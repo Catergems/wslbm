@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+var spinnerFrames = []string{"|", "/", "-", "\\"}
+
 // Download fetches url to destDir/<filename> and returns the local path.
 func Download(url, destDir string) (string, error) {
 	if err := os.MkdirAll(destDir, 0o755); err != nil {
@@ -48,33 +50,43 @@ func Download(url, destDir string) (string, error) {
 		return "", err
 	}
 
-	// Final line
-	elapsed := time.Since(pr.start).Seconds()
-	fmt.Printf("\r[%s] 100%% / %.1fs                    \n", filled(32), elapsed)
+	bar := buildBar(barWidth, barWidth)
+	fmt.Printf("\r[%s] 100%%  -  EST: 0s%s\n", bar, "          ")
 
 	return dest, nil
 }
 
-const barWidth = 32
+const barWidth = 50
 
-func filled(n int) string {
-	s := make([]byte, n)
-	for i := range s {
-		s[i] = '#'
+func buildBar(filled, total int) string {
+	bar := ""
+	for i := 0; i < filled; i++ {
+		bar += "■"
 	}
-	return string(s)
+	for i := filled; i < total; i++ {
+		bar += " "
+	}
+	return bar
 }
 
 type progressReader struct {
-	r       io.Reader
-	total   int64
-	written int64
-	start   time.Time
+	r          io.Reader
+	total      int64
+	written    int64
+	start      time.Time
+	spinIdx    int
+	lastUpdate time.Time
 }
 
 func (p *progressReader) Read(buf []byte) (int, error) {
 	n, err := p.r.Read(buf)
 	p.written += int64(n)
+
+	now := time.Now()
+	if now.Sub(p.lastUpdate) < 80*time.Millisecond {
+		return n, err
+	}
+	p.lastUpdate = now
 
 	pct := 0.0
 	if p.total > 0 {
@@ -85,17 +97,12 @@ func (p *progressReader) Read(buf []byte) (int, error) {
 	if filled > barWidth {
 		filled = barWidth
 	}
-	empty := barWidth - filled
 
-	bar := ""
-	for i := 0; i < filled; i++ {
-		bar += "#"
-	}
-	for i := 0; i < empty; i++ {
-		bar += " "
-	}
+	bar := buildBar(filled, barWidth)
+	spin := spinnerFrames[p.spinIdx%len(spinnerFrames)]
+	p.spinIdx++
 
-	elapsed := time.Since(p.start).Seconds()
+	elapsed := now.Sub(p.start).Seconds()
 	var est string
 	if pct > 0.01 && pct < 1.0 {
 		remaining := (elapsed / pct) - elapsed
@@ -104,7 +111,7 @@ func (p *progressReader) Read(buf []byte) (int, error) {
 		est = "EST: --"
 	}
 
-	fmt.Printf("\r[%s] %.0f%% / %s   ", bar, pct*100, est)
+	fmt.Printf("\r[%s] %.0f%%  %s  %s   ", bar, pct*100, spin, est)
 
 	return n, err
 }

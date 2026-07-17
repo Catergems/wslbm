@@ -1,5 +1,5 @@
 {
-    "verjson": "0.1",
+    "verjson": "6.1",
     "name": "ParrotOS",
     "url": "https://github.com/EXALAB/Anlinux-Resources/raw/refs/heads/master/Rootfs/Parrot/amd64/parrot-rootfs-amd64.tar.xz",
     "installationtype": "tar"

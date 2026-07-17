@@ -1,42 +1,23 @@
-# README
+# WSLBM | WSL(Window subsystem linux) Better manager
 
+The wsl is that are better than new one can install os out of official list
+
+# Commands
+`wslbm` same as wsl
+`wslbm --default-distro <distro>` same as wsl but different flag
+`wsl install <distro> --n [name]` Let's you install official and unofficial os list | `[name]` set name your os name freely
 ```
-C:\USERS\ADMIN\DESKTOP\FOLDER_CLEAN\CODES\CODINGENVHERE\WSML
-├───cmd
-│   └───wslbm
-├───distros
-├───internal
-│   ├───distro
-│   └───wslin
-└───pkg
-    └───downloader
+wslbm add --url <url> --n <name> [dir]    Add from URL
+wslbm add --tar <file> --n <name> [dir]   Add from local file
+wslbm distro <name> [-u <user>] [-e <shell>]   Launch distro
+wslbm distro <name> --default-user <user>       Set default user
+
+wslbm list                             List installed distros
+wslbm list -r                          List repo distros
+
+wslbm shut                             Shutdown all distros
+wslbm shut -s <name>                   Terminate specific distro
+
+wslbm info                             Show wslbm and WSL version
+wslbm help                             Show this help
 ```
-The tree file window cli doesnt show file so do urself
-
-This project
-make os managing easier/install other os easier
-wslbm
-wsl(window subsystem linux) better more
-
-internal/wslin/ :
-`add.go` will add os NOT on the LIST wsl
-`install.go` will add OS on the list wsl
-`shut.go` will shutdown all os that are running currently / wslbm shut -s `<distros>`
-`list.go` will list os On the list and on repo / wslbm -l -nv (wslbm -list -nv) will only show os that are on the list repo
-
-internal/distro/ :
-`registry.go` yk yk
-
-internal/distros/:
-`*.json` is MAIN repo of ROOTFS for examples
-```json
-{
-    "verjson": "0.1", //Use for Speficing Version of os old
-    "name": "Chimera",
-    "url": "https://repo.chimera-linux.org/live/latest/chimera-linux-x86_64-ROOTFS-20251220-full.tar.gz",
-    "installationtype": "tar"
-}
-```
-
-cmd/wslbm:
-`main.go` Main access to all of this above
