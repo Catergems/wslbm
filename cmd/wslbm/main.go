@@ -28,6 +28,8 @@ Usage:
   wslbm shut -s <name>                   Terminate specific distro
 
   wslbm info                             Show wslbm and WSL version
+  wslbm repo update                      Update distro repository definitions
+  wslbm update                           Update wslbm to latest version
   wslbm help                             Show this help
 `
 
@@ -148,6 +150,15 @@ func main() {
 
 	case "info":
 		err = wslin.Info()
+
+	case "repo":
+		if len(args) < 2 || args[1] != "update" {
+			fatal("Unknown subcommand. Usage: wslbm repo update")
+		}
+		err = wslin.UpdateRepo()
+
+	case "update":
+		err = wslin.Update()
 
 	case "help", "--help", "-h":
 		fmt.Print(usage)

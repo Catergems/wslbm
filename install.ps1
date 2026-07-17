@@ -4,7 +4,9 @@ $ErrorActionPreference = "Stop"
 $installDir = "$env:LOCALAPPDATA\wslbm"
 $distrosDir = "$installDir\distros"
 $wslosDir   = "$installDir\wslos"
-$zipUrl     = "https://github.com/Catergems/wslbm/releases/download/release-wslbm/wslbm-1.0.0.zip"
+$versionUrl = "https://raw.githubusercontent.com/Catergems/wslbm/main/version.txt"
+$latestVersion = (Invoke-RestMethod -Uri $versionUrl).Trim()
+$zipUrl     = "https://github.com/Catergems/wslbm/releases/download/release-wslbm/wslbm-$latestVersion.zip"
 $zipPath    = "$env:TEMP\wslbm-install.zip"
 $extractDir = "$env:TEMP\wslbm-extract"
 
@@ -16,7 +18,7 @@ New-Item -ItemType Directory -Force -Path $distrosDir | Out-Null
 New-Item -ItemType Directory -Force -Path $wslosDir   | Out-Null
 
 # Download zip
-Write-Host "Downloading wslbm-1.0.0.zip..."
+Write-Host "Downloading wslbm-$latestVersion.zip..."
 Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
 
 # Extract

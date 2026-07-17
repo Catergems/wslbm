@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-const WslbmVersion = "1.0.0"
+const WslbmVersion = "1.0.5"
 
 // Info prints wslbm version and WSL version.
 func Info() error {
