@@ -1,30 +1,16 @@
 # wslbm updater
-param(
-    [string]$LatestVersion
-)
-
 $ErrorActionPreference = "Stop"
-
-# Wait 1 second to give the calling wslbm process time to exit and release file locks
-Start-Sleep -Seconds 1
 
 $installDir = "$env:LOCALAPPDATA\wslbm"
 $distrosDir = "$installDir\distros"
-
-if (-not $LatestVersion) {
-    Write-Host "Checking latest version..."
-    $versionUrl = "https://raw.githubusercontent.com/Catergems/wslbm/main/version.txt"
-    $LatestVersion = (Invoke-RestMethod -Uri $versionUrl).Trim()
-}
-
-$zipUrl     = "https://github.com/Catergems/wslbm/releases/download/release-wslbm/wslbm-$LatestVersion.zip"
+$zipUrl     = "https://github.com/Catergems/wslbm/releases/download/release-wslbm/wslbm.zip"
 $zipPath    = "$env:TEMP\wslbm-update.zip"
 $extractDir = "$env:TEMP\wslbm-update-extract"
 
-Write-Host "Updating wslbm to version $LatestVersion..."
+Write-Host "Updating wslbm..."
 
 # Download zip
-Write-Host "Downloading latest release from $zipUrl..."
+Write-Host "Downloading latest release..."
 Invoke-WebRequest -Uri $zipUrl -OutFile $zipPath
 
 # Extract
@@ -39,7 +25,6 @@ if (-not $exe) {
     exit 1
 }
 
-# Rename old exe before replacing
 $oldExe = "$installDir\wslbm.old.exe"
 if (Test-Path "$installDir\wslbm.exe") {
     Move-Item "$installDir\wslbm.exe" $oldExe -Force
@@ -47,22 +32,8 @@ if (Test-Path "$installDir\wslbm.exe") {
 
 try {
     Copy-Item $exe.FullName -Destination "$installDir\wslbm.exe" -Force
-    
-    # Retry removing the old exe in case the process is still releasing
-    $attempts = 0
-    while ($attempts -lt 5) {
-        try {
-            if (Test-Path $oldExe) {
-                Remove-Item $oldExe -Force -ErrorAction Stop
-            }
-            break
-        } catch {
-            Start-Sleep -Seconds 1
-            $attempts++
-        }
-    }
+    if (Test-Path $oldExe) { Remove-Item $oldExe -Force }
 } catch {
-    # Restore old exe on failure
     if (Test-Path $oldExe) { Move-Item $oldExe "$installDir\wslbm.exe" -Force }
     Write-Error "Update failed: $_"
     exit 1
@@ -80,5 +51,4 @@ Remove-Item $zipPath -Force
 Remove-Item $extractDir -Recurse -Force
 
 Write-Host ""
-Write-Host "wslbm updated successfully to $LatestVersion!"
-Start-Sleep -Seconds 3
+Write-Host "wslbm updated successfully!"
