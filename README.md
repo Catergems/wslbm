@@ -2,7 +2,13 @@
 
 The wsl is that are better than new one can install os out of official list
 
-# Commands
+## Installation
+
+```ps1
+irm https://raw.githubusercontent.com/Catergems/wslbm/main/install.ps1 | iex
+```
+
+## Commands
 `wslbm` same as wsl
 `wslbm --default-distro <distro>` same as wsl but different flag
 `wsl install <distro> --n [name]` Let's you install official and unofficial os list | `[name]` set name your os name freely
