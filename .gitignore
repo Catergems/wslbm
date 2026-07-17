@@ -12,4 +12,10 @@ engrun_temp_*.ps1
 # Go
 *.test
 *.out
+
+# Archives
 *.zip
+*.tar
+*.tar.gz
+*.tar.xz
+*.wsl
