@@ -8,8 +8,8 @@ wslos/
 
 # Temp
 engrun_temp_*.ps1
-*.ps1
 
 # Go
 *.test
 *.out
+*.zip
