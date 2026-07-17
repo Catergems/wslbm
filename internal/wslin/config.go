@@ -1,3 +1,8 @@
 package wslin
 
-const InstallRoot = `C:\Users\admin\Desktop\Folder_clean\Codes\CodingEnvHere\wsml\wslos`
+import (
+	"os"
+	"path/filepath"
+)
+
+var InstallRoot = filepath.Join(os.Getenv("LOCALAPPDATA"), "wslbm", "wslos")
