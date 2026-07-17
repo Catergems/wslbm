@@ -3,7 +3,7 @@ $ErrorActionPreference = "Stop"
 
 $installDir = "$env:LOCALAPPDATA\wslbm"
 $distrosDir = "$installDir\distros"
-$zipUrl     = "https://github.com/Catergems/wslbm/releases/download/release-wslbm/wslbm.zip"
+$zipUrl     = "hhttps://github.com/Catergems/wslbm/releases/download/Tags/wslbm.zip"
 $zipPath    = "$env:TEMP\wslbm-update.zip"
 $extractDir = "$env:TEMP\wslbm-update-extract"
 
