@@ -16,7 +16,6 @@ const (
 	updateScript = "https://raw.githubusercontent.com/Catergems/wslbm/main/update.ps1"
 )
 
-// checkNewer returns true if latest is a higher semver version than current.
 func checkNewer(latest, current string) bool {
 	latest = strings.TrimPrefix(latest, "v")
 	current = strings.TrimPrefix(current, "v")
@@ -38,7 +37,7 @@ func checkNewer(latest, current string) bool {
 	return len(latestParts) > len(currentParts)
 }
 
-// Update checks for a newer version and runs update.ps1 if one is available.
+// Update checks for a newer version and launches update.ps1 in a detached window.
 func Update() error {
 	fmt.Println("Checking for updates...")
 
@@ -65,25 +64,27 @@ func Update() error {
 	}
 
 	fmt.Printf("New version available: %s -> %s\n", current, latest)
-	fmt.Println("Running updater...")
+	fmt.Println("Downloading update script...")
 
-	// Download update.ps1 to temp
 	scriptPath := filepath.Join(os.TempDir(), "wslbm-update.ps1")
 	if err := downloadFile(updateScript, scriptPath); err != nil {
 		return fmt.Errorf("failed to download update script: %w", err)
 	}
 
-	// Launch update.ps1 in a separate window so wslbm can exit immediately and release the file lock
-	cmd := exec.Command("cmd", "/c", "start", "powershell", "-ExecutionPolicy", "Bypass", "-File", scriptPath, "-LatestVersion", latest)
+	// Launch as a fully detached powershell window so wslbm can exit and release the exe lock
+	cmd := exec.Command("powershell", "-Command",
+		fmt.Sprintf(`Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -File "%s"' -WindowStyle Normal`, scriptPath),
+	)
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("failed to start update script: %w", err)
+		return fmt.Errorf("failed to launch updater: %w", err)
 	}
 
-	fmt.Println("Update started in a separate window. Exiting wslbm to allow replacement...")
+	fmt.Println("Updater launched. wslbm will now exit to allow the update to proceed.")
+	os.Exit(0)
 	return nil
 }
 
-// UpdateRepo downloads the latest distro definition files from the GitHub repository main branch.
+// UpdateRepo downloads the latest distro definitions from GitHub.
 func UpdateRepo() error {
 	fmt.Println("Updating distro repository definitions...")
 
@@ -119,19 +120,19 @@ func UpdateRepo() error {
 
 			rc, err := f.Open()
 			if err != nil {
-				return fmt.Errorf("failed to open file %s inside zip: %w", f.Name, err)
+				return fmt.Errorf("failed to open %s in zip: %w", f.Name, err)
 			}
 
 			out, err := os.Create(destPath)
 			if err != nil {
 				rc.Close()
-				return fmt.Errorf("failed to create destination file %s: %w", destPath, err)
+				return fmt.Errorf("failed to create %s: %w", destPath, err)
 			}
 
 			if _, err := io.Copy(out, rc); err != nil {
 				rc.Close()
 				out.Close()
-				return fmt.Errorf("failed to copy file %s: %w", destPath, err)
+				return fmt.Errorf("failed to copy %s: %w", destPath, err)
 			}
 			rc.Close()
 			out.Close()
@@ -139,7 +140,7 @@ func UpdateRepo() error {
 		}
 	}
 
-	fmt.Printf("Successfully updated %d distro definition(s) from latest repo.\n", updatedCount)
+	fmt.Printf("Updated %d distro definition(s).\n", updatedCount)
 	return nil
 }
 
