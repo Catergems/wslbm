@@ -72,7 +72,7 @@ func Update() error {
 	}
 
 	// Launch as a fully detached powershell window so wslbm can exit and release the exe lock
-	cmd := exec.Command("powershell", "-Command",
+	cmd := exec.Command("pwsh", "-Command",
 		fmt.Sprintf(`Start-Process powershell -ArgumentList '-ExecutionPolicy Bypass -File "%s"' -WindowStyle Normal`, scriptPath),
 	)
 	if err := cmd.Start(); err != nil {
