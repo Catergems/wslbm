@@ -10,6 +10,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+
+	"wslbm/internal/distro"
 )
 
 var spinFrames = []string{"|", "/", "-", "\\"}
@@ -18,11 +20,11 @@ func spinPrint(msg string, idx int) {
 	fmt.Printf("\r%s  %s   ", msg, spinFrames[idx%len(spinFrames)])
 }
 
-// Check runs sig verification (if provided) then checksum verification.
-func Check(localFile, checksumURL, checksumType, sigURL, sigType string) error {
-	if sigURL != "" {
-		if err := verifySig(checksumURL, sigURL, sigType); err != nil {
-			return fmt.Errorf("signature verification failed: %w", err)
+// Check runs all sig verifications then checksum verification.
+func Check(localFile, checksumURL, checksumType string, sigs []distro.Sig) error {
+	for _, sig := range sigs {
+		if err := verifySig(checksumURL, sig.URL, sig.Type); err != nil {
+			return fmt.Errorf("signature verification failed (%s): %w", sig.Type, err)
 		}
 	}
 	if checksumURL != "" {
@@ -96,7 +98,6 @@ func extractHash(txt, checksumType, filename string) (string, error) {
 	scanner := bufio.NewScanner(strings.NewReader(txt))
 	switch checksumType {
 	case "sha256txt":
-		// format: "<hash>  <filename>"
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
 			parts := strings.Fields(line)
@@ -108,10 +109,8 @@ func extractHash(txt, checksumType, filename string) (string, error) {
 			}
 		}
 	case "sha256bsd":
-		// format: "SHA256 (filename) = hash"
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
-			// e.g. SHA256 (void-x86_64-ROOTFS-20250202.tar.xz) = abc123
 			if !strings.HasPrefix(line, "SHA256") {
 				continue
 			}
@@ -129,7 +128,6 @@ func extractHash(txt, checksumType, filename string) (string, error) {
 			}
 		}
 	case "sha256":
-		// single hash file
 		return strings.TrimSpace(strings.Fields(txt)[0]), nil
 	default:
 		return "", fmt.Errorf("unknown checksumtype %q", checksumType)
@@ -151,7 +149,8 @@ func sha256File(path string) (string, error) {
 }
 
 func verifySig(checksumURL, sigURL, sigType string) error {
-	fmt.Print("Verifying signature...")
+	label := fmt.Sprintf("Verifying signature (%s)...", sigType)
+	fmt.Print(label)
 	idx := 0
 	done := make(chan struct{})
 
@@ -161,7 +160,7 @@ func verifySig(checksumURL, sigURL, sigType string) error {
 			case <-done:
 				return
 			default:
-				spinPrint("Verifying signature...", idx)
+				spinPrint(label, idx)
 				idx++
 				time.Sleep(80 * time.Millisecond)
 			}
@@ -177,7 +176,6 @@ func verifySig(checksumURL, sigURL, sigType string) error {
 		return fmt.Errorf("could not fetch sig/checksum files")
 	}
 
-	_ = sigType
-	fmt.Printf("\rVerifying signature...  OK%s\n", "          ")
+	fmt.Printf("\r%s  OK%s\n", label, "          ")
 	return nil
 }

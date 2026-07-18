@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+type Sig struct {
+	URL  string `json:"url"`
+	Type string `json:"type"`
+}
+
 type Distro struct {
 	VerJSON          string `json:"verjson"`
 	Name             string `json:"name"`
@@ -15,8 +20,7 @@ type Distro struct {
 	Info             string `json:"info,omitempty"`
 	Checksum         string `json:"checksum,omitempty"`
 	ChecksumType     string `json:"checksumtype,omitempty"`
-	Sig              string `json:"sig,omitempty"`
-	SigType          string `json:"sigtype,omitempty"`
+	Sigs             []Sig  `json:"sigs,omitempty"`
 }
 
 // distrosDir returns the path to the distros/ folder next to the executable.

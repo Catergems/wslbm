@@ -5,6 +5,7 @@
     "installationtype": "tar",
     "checksum": "https://repo-default.voidlinux.org/live/current/sha256sum.txt",
     "checksumtype": "sha256bsd",
-    "sig": "https://repo-default.voidlinux.org/live/current/sha256sum.sig",
-    "sigtype": "minisig"
+    "sigs": [
+        {"url": "https://repo-default.voidlinux.org/live/current/sha256sum.sig", "type": "minisig"}
+    ]
 }

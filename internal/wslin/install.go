@@ -32,8 +32,8 @@ func Install(name, installDir, customName string) error {
 		return fmt.Errorf("download error: %w", err)
 	}
 
-	if d.Checksum != "" || d.Sig != "" {
-		if err := verify.Check(localFile, d.Checksum, d.ChecksumType, d.Sig, d.SigType); err != nil {
+	if d.Checksum != "" || len(d.Sigs) > 0 {
+		if err := verify.Check(localFile, d.Checksum, d.ChecksumType, d.Sigs); err != nil {
 			return err
 		}
 	}

@@ -5,6 +5,7 @@
     "installationtype": "tar",
     "checksum": "https://repo.chimera-linux.org/live/latest/sha256sums.txt",
     "checksumtype": "sha256txt",
-    "sig": "https://repo.chimera-linux.org/live/latest/sha256sums.txt.minisig",
-    "sigtype": "minisig"
+    "sigs": [
+        {"url": "https://repo.chimera-linux.org/live/latest/sha256sums.txt.minisig", "type": "minisig"}
+    ]
 }
