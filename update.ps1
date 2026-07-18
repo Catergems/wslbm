@@ -9,6 +9,14 @@ $extractDir = "$env:TEMP\wslbm-update-extract"
 
 Write-Host "Updating wslbm..."
 
+# Kill any running wslbm processes
+$procs = Get-Process -Name "wslbm" -ErrorAction SilentlyContinue
+if ($procs) {
+    Write-Host "Terminating running wslbm instances..."
+    $procs | Stop-Process -Force
+    Start-Sleep -Milliseconds 500
+}
+
 Write-Host "Downloading latest release..."
 curl -L $zipUrl -o $zipPath
 
