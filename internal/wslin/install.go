@@ -49,7 +49,7 @@ func Install(name, installDir, customName string) error {
 	case "wsl":
 		cmd = exec.Command("wsl", "--import", wslName, installDir, localFile)
 	case "tar":
-		cmd = exec.Command("wsl", "--import", wslName, installDir, localFile, "--version", "2")
+		cmd = exec.Command("wsl", "--import", wslName, installDir, localFile)
 	default:
 		return fmt.Errorf("unknown installation type %q", d.InstallationType)
 	}

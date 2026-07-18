@@ -19,3 +19,4 @@ engrun_temp_*.ps1
 *.tar.gz
 *.tar.xz
 *.wsl
+build-release.ps1
